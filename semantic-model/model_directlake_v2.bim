@@ -1,0 +1,1210 @@
+{
+  "compatibilityLevel": 1604,
+  "model": {
+    "culture": "ja-JP",
+    "defaultPowerBIDataSourceVersion": "powerBI_V3",
+    "expressions": [
+      {
+        "name": "DatabaseQuery",
+        "kind": "m",
+        "expression": "let\n\tdatabase = Sql.Database(\"nwoitneutuqe3bmauoxbiqpwom-houtvixxtjluvergbbmhvhtqvu.datawarehouse.fabric.microsoft.com\", \"fd2e4d4e-1974-45b1-86e4-7bff8d86a055\")\nin\n\tdatabase"
+      }
+    ],
+    "tables": [
+      {
+        "name": "DimDate",
+        "dataCategory": "Time",
+        "columns": [
+          {
+            "name": "DateKey",
+            "dataType": "int64",
+            "sourceColumn": "DateKey",
+            "sourceProviderType": "bigInt",
+            "isHidden": true,
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "日付キー（YYYYMMDD形式）"
+              }
+            ]
+          },
+          {
+            "name": "FullDate",
+            "dataType": "dateTime",
+            "sourceColumn": "FullDate",
+            "sourceProviderType": "dateTime2",
+            "isKey": true,
+            "formatString": "yyyy/MM/dd",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "日付"
+              }
+            ]
+          },
+          {
+            "name": "Year",
+            "dataType": "int64",
+            "sourceColumn": "Year",
+            "sourceProviderType": "bigInt",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "年"
+              }
+            ],
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Month",
+            "dataType": "int64",
+            "sourceColumn": "Month",
+            "sourceProviderType": "bigInt",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "月"
+              }
+            ],
+            "summarizeBy": "none"
+          },
+          {
+            "name": "MonthName",
+            "dataType": "string",
+            "sourceColumn": "MonthName",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "月名"
+              }
+            ],
+            "sortByColumn": "Month"
+          },
+          {
+            "name": "Quarter",
+            "dataType": "string",
+            "sourceColumn": "Quarter",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "四半期"
+              }
+            ]
+          },
+          {
+            "name": "DayOfWeek",
+            "dataType": "string",
+            "sourceColumn": "DayOfWeek",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "曜日"
+              }
+            ]
+          },
+          {
+            "name": "IsWeekend",
+            "dataType": "boolean",
+            "sourceColumn": "IsWeekend",
+            "sourceProviderType": "bit",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "週末フラグ"
+              }
+            ]
+          },
+          {
+            "name": "FiscalYear",
+            "dataType": "int64",
+            "sourceColumn": "FiscalYear",
+            "sourceProviderType": "bigInt",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "会計年度"
+              }
+            ],
+            "summarizeBy": "none"
+          },
+          {
+            "name": "FiscalQuarter",
+            "dataType": "string",
+            "sourceColumn": "FiscalQuarter",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "会計四半期"
+              }
+            ]
+          }
+        ],
+        "partitions": [
+          {
+            "name": "DimDate_part",
+            "mode": "directLake",
+            "source": {
+              "type": "entity",
+              "entityName": "DimDate",
+              "schemaName": "dbo",
+              "expressionSource": "DatabaseQuery"
+            }
+          }
+        ]
+      },
+      {
+        "name": "DimProduct",
+        "columns": [
+          {
+            "name": "ProductKey",
+            "dataType": "int64",
+            "sourceColumn": "ProductKey",
+            "sourceProviderType": "bigInt",
+            "isKey": true,
+            "isHidden": true
+          },
+          {
+            "name": "ProductID",
+            "dataType": "string",
+            "sourceColumn": "ProductID",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "製品ID"
+              }
+            ]
+          },
+          {
+            "name": "ProductName",
+            "dataType": "string",
+            "sourceColumn": "ProductName",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "製品名"
+              }
+            ]
+          },
+          {
+            "name": "Category",
+            "dataType": "string",
+            "sourceColumn": "Category",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "製品カテゴリ"
+              }
+            ]
+          },
+          {
+            "name": "UnitPrice",
+            "dataType": "int64",
+            "sourceColumn": "UnitPrice",
+            "sourceProviderType": "bigInt",
+            "formatString": "¥#,##0",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "標準単価"
+              }
+            ]
+          },
+          {
+            "name": "UnitCost",
+            "dataType": "int64",
+            "sourceColumn": "UnitCost",
+            "sourceProviderType": "bigInt",
+            "formatString": "¥#,##0",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "原価"
+              }
+            ]
+          },
+          {
+            "name": "ManufacturingLeadTimeDays",
+            "dataType": "int64",
+            "sourceColumn": "ManufacturingLeadTimeDays",
+            "sourceProviderType": "bigInt",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "製造リードタイム"
+              }
+            ]
+          },
+          {
+            "name": "WeightKg",
+            "dataType": "double",
+            "sourceColumn": "WeightKg",
+            "sourceProviderType": "real",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "重量"
+              }
+            ]
+          },
+          {
+            "name": "LaunchDate",
+            "dataType": "dateTime",
+            "sourceColumn": "LaunchDate",
+            "sourceProviderType": "dateTime2",
+            "formatString": "yyyy/MM/dd",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "発売日"
+              }
+            ]
+          }
+        ],
+        "partitions": [
+          {
+            "name": "DimProduct_part",
+            "mode": "directLake",
+            "source": {
+              "type": "entity",
+              "entityName": "DimProduct",
+              "schemaName": "dbo",
+              "expressionSource": "DatabaseQuery"
+            }
+          }
+        ]
+      },
+      {
+        "name": "DimCustomer",
+        "columns": [
+          {
+            "name": "CustomerKey",
+            "dataType": "int64",
+            "sourceColumn": "CustomerKey",
+            "sourceProviderType": "bigInt",
+            "isKey": true,
+            "isHidden": true
+          },
+          {
+            "name": "CustomerID",
+            "dataType": "string",
+            "sourceColumn": "CustomerID",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "顧客ID"
+              }
+            ]
+          },
+          {
+            "name": "CustomerName",
+            "dataType": "string",
+            "sourceColumn": "CustomerName",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "顧客名"
+              }
+            ]
+          },
+          {
+            "name": "Industry",
+            "dataType": "string",
+            "sourceColumn": "Industry",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "業種"
+              }
+            ]
+          },
+          {
+            "name": "Region",
+            "dataType": "string",
+            "sourceColumn": "Region",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "地域"
+              }
+            ]
+          },
+          {
+            "name": "Prefecture",
+            "dataType": "string",
+            "sourceColumn": "Prefecture",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "都道府県"
+              }
+            ]
+          },
+          {
+            "name": "EmployeeCount",
+            "dataType": "int64",
+            "sourceColumn": "EmployeeCount",
+            "sourceProviderType": "bigInt",
+            "formatString": "#,##0",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "従業員数"
+              }
+            ]
+          },
+          {
+            "name": "AccountStartDate",
+            "dataType": "dateTime",
+            "sourceColumn": "AccountStartDate",
+            "sourceProviderType": "dateTime2",
+            "formatString": "yyyy/MM/dd",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "取引開始日"
+              }
+            ]
+          },
+          {
+            "name": "CustomerRank",
+            "dataType": "string",
+            "sourceColumn": "CustomerRank",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "顧客ランク"
+              }
+            ]
+          },
+          {
+            "name": "SalesRep",
+            "dataType": "string",
+            "sourceColumn": "SalesRep",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "担当営業"
+              }
+            ]
+          }
+        ],
+        "partitions": [
+          {
+            "name": "DimCustomer_part",
+            "mode": "directLake",
+            "source": {
+              "type": "entity",
+              "entityName": "DimCustomer",
+              "schemaName": "dbo",
+              "expressionSource": "DatabaseQuery"
+            }
+          }
+        ]
+      },
+      {
+        "name": "FactSales",
+        "columns": [
+          {
+            "name": "SalesKey",
+            "dataType": "int64",
+            "sourceColumn": "SalesKey",
+            "sourceProviderType": "bigInt",
+            "isHidden": true
+          },
+          {
+            "name": "OrderID",
+            "dataType": "string",
+            "sourceColumn": "OrderID",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "受注ID"
+              }
+            ]
+          },
+          {
+            "name": "OrderDateKey",
+            "dataType": "int64",
+            "sourceColumn": "OrderDateKey",
+            "sourceProviderType": "bigInt",
+            "isHidden": true
+          },
+          {
+            "name": "ShipDateKey",
+            "dataType": "int64",
+            "sourceColumn": "ShipDateKey",
+            "sourceProviderType": "bigInt",
+            "isHidden": true
+          },
+          {
+            "name": "CustomerKey",
+            "dataType": "int64",
+            "sourceColumn": "CustomerKey",
+            "sourceProviderType": "bigInt",
+            "isHidden": true
+          },
+          {
+            "name": "ProductKey",
+            "dataType": "int64",
+            "sourceColumn": "ProductKey",
+            "sourceProviderType": "bigInt",
+            "isHidden": true
+          },
+          {
+            "name": "Quantity",
+            "dataType": "int64",
+            "sourceColumn": "Quantity",
+            "sourceProviderType": "bigInt",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "受注数量"
+              }
+            ]
+          },
+          {
+            "name": "UnitSellingPrice",
+            "dataType": "int64",
+            "sourceColumn": "UnitSellingPrice",
+            "sourceProviderType": "bigInt",
+            "formatString": "¥#,##0",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "販売単価"
+              }
+            ]
+          },
+          {
+            "name": "TotalAmount",
+            "dataType": "int64",
+            "sourceColumn": "TotalAmount",
+            "sourceProviderType": "bigInt",
+            "formatString": "¥#,##0",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "合計金額"
+              }
+            ]
+          },
+          {
+            "name": "DiscountRate",
+            "dataType": "double",
+            "sourceColumn": "DiscountRate",
+            "sourceProviderType": "real",
+            "formatString": "0%",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "割引率"
+              }
+            ]
+          },
+          {
+            "name": "Status",
+            "dataType": "string",
+            "sourceColumn": "Status",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "受注ステータス"
+              }
+            ]
+          },
+          {
+            "name": "DeliveryRegion",
+            "dataType": "string",
+            "sourceColumn": "DeliveryRegion",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "納品先地域"
+              }
+            ]
+          }
+        ],
+        "measures": [
+          {
+            "name": "売上合計",
+            "expression": "SUM(FactSales[TotalAmount])",
+            "formatString": "¥#,##0"
+          },
+          {
+            "name": "有効売上合計",
+            "expression": "CALCULATE(SUM(FactSales[TotalAmount]), FactSales[Status] <> \"キャンセル\")",
+            "formatString": "¥#,##0"
+          },
+          {
+            "name": "受注件数",
+            "expression": "COUNTROWS(FactSales)",
+            "formatString": "#,##0"
+          },
+          {
+            "name": "有効受注件数",
+            "expression": "CALCULATE(COUNTROWS(FactSales), FactSales[Status] <> \"キャンセル\")",
+            "formatString": "#,##0"
+          },
+          {
+            "name": "受注数量合計",
+            "expression": "SUM(FactSales[Quantity])",
+            "formatString": "#,##0"
+          },
+          {
+            "name": "平均受注単価",
+            "expression": "AVERAGE(FactSales[UnitSellingPrice])",
+            "formatString": "¥#,##0"
+          },
+          {
+            "name": "平均受注金額",
+            "expression": "DIVIDE(SUM(FactSales[TotalAmount]), COUNTROWS(FactSales))",
+            "formatString": "¥#,##0"
+          },
+          {
+            "name": "キャンセル率",
+            "expression": "DIVIDE(CALCULATE(COUNTROWS(FactSales), FactSales[Status] = \"キャンセル\"), COUNTROWS(FactSales))",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "出荷済件数",
+            "expression": "CALCULATE(COUNTROWS(FactSales), FactSales[Status] = \"出荷済\")",
+            "formatString": "#,##0"
+          },
+          {
+            "name": "粗利額",
+            "expression": "SUMX(FactSales, FactSales[TotalAmount] - (RELATED(DimProduct[UnitCost]) * FactSales[Quantity]))",
+            "formatString": "¥#,##0"
+          },
+          {
+            "name": "粗利率",
+            "expression": "DIVIDE([粗利額], [売上合計])",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "顧客数",
+            "expression": "DISTINCTCOUNT(FactSales[CustomerKey])",
+            "formatString": "#,##0"
+          },
+          {
+            "name": "売上累計YTD",
+            "expression": "TOTALYTD([有効売上合計], DimDate[FullDate], \"3/31\")",
+            "formatString": "¥#,##0"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "FactSales_part",
+            "mode": "directLake",
+            "source": {
+              "type": "entity",
+              "entityName": "FactSales",
+              "schemaName": "dbo",
+              "expressionSource": "DatabaseQuery"
+            }
+          }
+        ]
+      },
+      {
+        "name": "FactProduction",
+        "columns": [
+          {
+            "name": "ProductionKey",
+            "dataType": "int64",
+            "sourceColumn": "ProductionKey",
+            "sourceProviderType": "bigInt",
+            "isHidden": true
+          },
+          {
+            "name": "ProductionRecordID",
+            "dataType": "string",
+            "sourceColumn": "ProductionRecordID",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "生産記録ID"
+              }
+            ]
+          },
+          {
+            "name": "ProductionDateKey",
+            "dataType": "int64",
+            "sourceColumn": "ProductionDateKey",
+            "sourceProviderType": "bigInt",
+            "isHidden": true
+          },
+          {
+            "name": "ProductKey",
+            "dataType": "int64",
+            "sourceColumn": "ProductKey",
+            "sourceProviderType": "bigInt",
+            "isHidden": true
+          },
+          {
+            "name": "Factory",
+            "dataType": "string",
+            "sourceColumn": "Factory",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "工場名"
+              }
+            ]
+          },
+          {
+            "name": "ProductionLine",
+            "dataType": "string",
+            "sourceColumn": "ProductionLine",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "製造ライン"
+              }
+            ]
+          },
+          {
+            "name": "Shift",
+            "dataType": "string",
+            "sourceColumn": "Shift",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "シフト"
+              }
+            ]
+          },
+          {
+            "name": "PlannedQuantity",
+            "dataType": "int64",
+            "sourceColumn": "PlannedQuantity",
+            "sourceProviderType": "bigInt",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "計画数量"
+              }
+            ]
+          },
+          {
+            "name": "ActualQuantity",
+            "dataType": "int64",
+            "sourceColumn": "ActualQuantity",
+            "sourceProviderType": "bigInt",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "実績数量"
+              }
+            ]
+          },
+          {
+            "name": "DefectQuantity",
+            "dataType": "int64",
+            "sourceColumn": "DefectQuantity",
+            "sourceProviderType": "bigInt",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "不良数量"
+              }
+            ]
+          },
+          {
+            "name": "YieldRate",
+            "dataType": "double",
+            "sourceColumn": "YieldRate",
+            "sourceProviderType": "real",
+            "formatString": "0.0%",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "歩留まり率"
+              }
+            ]
+          },
+          {
+            "name": "WorkHours",
+            "dataType": "double",
+            "sourceColumn": "WorkHours",
+            "sourceProviderType": "real",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "作業時間"
+              }
+            ]
+          },
+          {
+            "name": "DowntimeMinutes",
+            "dataType": "int64",
+            "sourceColumn": "DowntimeMinutes",
+            "sourceProviderType": "bigInt",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "設備停止時間"
+              }
+            ]
+          }
+        ],
+        "measures": [
+          {
+            "name": "平均歩留まり率",
+            "expression": "AVERAGE(FactProduction[YieldRate])",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "生産計画数量合計",
+            "expression": "SUM(FactProduction[PlannedQuantity])",
+            "formatString": "#,##0"
+          },
+          {
+            "name": "生産実績数量合計",
+            "expression": "SUM(FactProduction[ActualQuantity])",
+            "formatString": "#,##0"
+          },
+          {
+            "name": "不良数量合計",
+            "expression": "SUM(FactProduction[DefectQuantity])",
+            "formatString": "#,##0"
+          },
+          {
+            "name": "計画達成率",
+            "expression": "DIVIDE(SUM(FactProduction[ActualQuantity]), SUM(FactProduction[PlannedQuantity]))",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "歩留まり異常件数",
+            "expression": "CALCULATE(COUNTROWS(FactProduction), FactProduction[YieldRate] < 0.90)",
+            "formatString": "#,##0"
+          },
+          {
+            "name": "設備稼働率",
+            "expression": "DIVIDE(SUM(FactProduction[WorkHours]) * 60 - SUM(FactProduction[DowntimeMinutes]), SUM(FactProduction[WorkHours]) * 60)",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "平均ダウンタイム",
+            "expression": "AVERAGE(FactProduction[DowntimeMinutes])",
+            "formatString": "#,##0"
+          },
+          {
+            "name": "生産記録数",
+            "expression": "COUNTROWS(FactProduction)",
+            "formatString": "#,##0"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "FactProduction_part",
+            "mode": "directLake",
+            "source": {
+              "type": "entity",
+              "entityName": "FactProduction",
+              "schemaName": "dbo",
+              "expressionSource": "DatabaseQuery"
+            }
+          }
+        ]
+      },
+      {
+        "name": "FactInventorySnapshot",
+        "columns": [
+          {
+            "name": "InventoryKey",
+            "dataType": "int64",
+            "sourceColumn": "InventoryKey",
+            "sourceProviderType": "bigInt",
+            "isHidden": true
+          },
+          {
+            "name": "SnapshotDateKey",
+            "dataType": "int64",
+            "sourceColumn": "SnapshotDateKey",
+            "sourceProviderType": "bigInt",
+            "isHidden": true
+          },
+          {
+            "name": "ProductKey",
+            "dataType": "int64",
+            "sourceColumn": "ProductKey",
+            "sourceProviderType": "bigInt",
+            "isHidden": true
+          },
+          {
+            "name": "WarehouseName",
+            "dataType": "string",
+            "sourceColumn": "WarehouseName",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "倉庫名"
+              }
+            ]
+          },
+          {
+            "name": "CurrentStock",
+            "dataType": "int64",
+            "sourceColumn": "CurrentStock",
+            "sourceProviderType": "bigInt",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "現在庫数"
+              }
+            ]
+          },
+          {
+            "name": "SafetyStock",
+            "dataType": "int64",
+            "sourceColumn": "SafetyStock",
+            "sourceProviderType": "bigInt",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "安全在庫数"
+              }
+            ]
+          },
+          {
+            "name": "StockStatus",
+            "dataType": "string",
+            "sourceColumn": "StockStatus",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "在庫ステータス"
+              }
+            ]
+          },
+          {
+            "name": "LastReceiptDateKey",
+            "dataType": "int64",
+            "sourceColumn": "LastReceiptDateKey",
+            "sourceProviderType": "bigInt",
+            "isHidden": true
+          },
+          {
+            "name": "ShelfLocation",
+            "dataType": "string",
+            "sourceColumn": "ShelfLocation",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "棚番"
+              }
+            ]
+          }
+        ],
+        "measures": [
+          {
+            "name": "在庫総数",
+            "expression": "SUM(FactInventorySnapshot[CurrentStock])",
+            "formatString": "#,##0"
+          },
+          {
+            "name": "在庫不足SKU数",
+            "expression": "CALCULATE(COUNTROWS(FactInventorySnapshot), FactInventorySnapshot[StockStatus] = \"在庫不足\")",
+            "formatString": "#,##0"
+          },
+          {
+            "name": "過剰在庫SKU数",
+            "expression": "CALCULATE(COUNTROWS(FactInventorySnapshot), FactInventorySnapshot[StockStatus] = \"過剰在庫\")",
+            "formatString": "#,##0"
+          },
+          {
+            "name": "在庫充足率",
+            "expression": "DIVIDE(CALCULATE(COUNTROWS(FactInventorySnapshot), FactInventorySnapshot[CurrentStock] >= FactInventorySnapshot[SafetyStock]), COUNTROWS(FactInventorySnapshot))",
+            "formatString": "0.0%"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "FactInventorySnapshot_part",
+            "mode": "directLake",
+            "source": {
+              "type": "entity",
+              "entityName": "FactInventorySnapshot",
+              "schemaName": "dbo",
+              "expressionSource": "DatabaseQuery"
+            }
+          }
+        ]
+      },
+      {
+        "name": "FactQualityInspection",
+        "columns": [
+          {
+            "name": "QualityKey",
+            "dataType": "int64",
+            "sourceColumn": "QualityKey",
+            "sourceProviderType": "bigInt",
+            "isHidden": true
+          },
+          {
+            "name": "InspectionID",
+            "dataType": "string",
+            "sourceColumn": "InspectionID",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "検査ID"
+              }
+            ]
+          },
+          {
+            "name": "InspectionDateKey",
+            "dataType": "int64",
+            "sourceColumn": "InspectionDateKey",
+            "sourceProviderType": "bigInt",
+            "isHidden": true
+          },
+          {
+            "name": "ProductKey",
+            "dataType": "int64",
+            "sourceColumn": "ProductKey",
+            "sourceProviderType": "bigInt",
+            "isHidden": true
+          },
+          {
+            "name": "InspectionType",
+            "dataType": "string",
+            "sourceColumn": "InspectionType",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "検査種別"
+              }
+            ]
+          },
+          {
+            "name": "LotSize",
+            "dataType": "int64",
+            "sourceColumn": "LotSize",
+            "sourceProviderType": "bigInt",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "ロットサイズ"
+              }
+            ]
+          },
+          {
+            "name": "SampleSize",
+            "dataType": "int64",
+            "sourceColumn": "SampleSize",
+            "sourceProviderType": "bigInt",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "サンプル数"
+              }
+            ]
+          },
+          {
+            "name": "Result",
+            "dataType": "string",
+            "sourceColumn": "Result",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "検査結果"
+              }
+            ]
+          },
+          {
+            "name": "DefectCategory",
+            "dataType": "string",
+            "sourceColumn": "DefectCategory",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "不良カテゴリ"
+              }
+            ]
+          },
+          {
+            "name": "DefectCount",
+            "dataType": "int64",
+            "sourceColumn": "DefectCount",
+            "sourceProviderType": "bigInt",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "不良数"
+              }
+            ]
+          },
+          {
+            "name": "Inspector",
+            "dataType": "string",
+            "sourceColumn": "Inspector",
+            "sourceProviderType": "varchar",
+            "annotations": [
+              {
+                "name": "Description",
+                "value": "検査担当者"
+              }
+            ]
+          }
+        ],
+        "measures": [
+          {
+            "name": "検査件数",
+            "expression": "COUNTROWS(FactQualityInspection)",
+            "formatString": "#,##0"
+          },
+          {
+            "name": "合格率",
+            "expression": "DIVIDE(CALCULATE(COUNTROWS(FactQualityInspection), FactQualityInspection[Result] = \"合格\"), COUNTROWS(FactQualityInspection))",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "不合格率",
+            "expression": "DIVIDE(CALCULATE(COUNTROWS(FactQualityInspection), FactQualityInspection[Result] = \"不合格\"), COUNTROWS(FactQualityInspection))",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "不良数合計",
+            "expression": "SUM(FactQualityInspection[DefectCount])",
+            "formatString": "#,##0"
+          },
+          {
+            "name": "不良率",
+            "expression": "DIVIDE(SUM(FactQualityInspection[DefectCount]), SUM(FactQualityInspection[SampleSize]))",
+            "formatString": "0.0%"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "FactQualityInspection_part",
+            "mode": "directLake",
+            "source": {
+              "type": "entity",
+              "entityName": "FactQualityInspection",
+              "schemaName": "dbo",
+              "expressionSource": "DatabaseQuery"
+            }
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "name": "Sales_OrderDate",
+        "fromTable": "FactSales",
+        "fromColumn": "OrderDateKey",
+        "toTable": "DimDate",
+        "toColumn": "DateKey",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true,
+        "crossFilteringBehavior": "oneDirection"
+      },
+      {
+        "name": "Sales_Product",
+        "fromTable": "FactSales",
+        "fromColumn": "ProductKey",
+        "toTable": "DimProduct",
+        "toColumn": "ProductKey",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true,
+        "crossFilteringBehavior": "oneDirection"
+      },
+      {
+        "name": "Sales_Customer",
+        "fromTable": "FactSales",
+        "fromColumn": "CustomerKey",
+        "toTable": "DimCustomer",
+        "toColumn": "CustomerKey",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true,
+        "crossFilteringBehavior": "oneDirection"
+      },
+      {
+        "name": "Production_Date",
+        "fromTable": "FactProduction",
+        "fromColumn": "ProductionDateKey",
+        "toTable": "DimDate",
+        "toColumn": "DateKey",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": false,
+        "crossFilteringBehavior": "oneDirection"
+      },
+      {
+        "name": "Production_Product",
+        "fromTable": "FactProduction",
+        "fromColumn": "ProductKey",
+        "toTable": "DimProduct",
+        "toColumn": "ProductKey",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true,
+        "crossFilteringBehavior": "oneDirection"
+      },
+      {
+        "name": "Inventory_Product",
+        "fromTable": "FactInventorySnapshot",
+        "fromColumn": "ProductKey",
+        "toTable": "DimProduct",
+        "toColumn": "ProductKey",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true,
+        "crossFilteringBehavior": "oneDirection"
+      },
+      {
+        "name": "Quality_Date",
+        "fromTable": "FactQualityInspection",
+        "fromColumn": "InspectionDateKey",
+        "toTable": "DimDate",
+        "toColumn": "DateKey",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": false,
+        "crossFilteringBehavior": "oneDirection"
+      },
+      {
+        "name": "Quality_Product",
+        "fromTable": "FactQualityInspection",
+        "fromColumn": "ProductKey",
+        "toTable": "DimProduct",
+        "toColumn": "ProductKey",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true,
+        "crossFilteringBehavior": "oneDirection"
+      }
+    ]
+  }
+}

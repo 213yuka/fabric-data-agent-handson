@@ -1,0 +1,434 @@
+{
+  "name": "コントソ精密工業_製造分析モデル",
+  "compatibilityLevel": 1604,
+  "model": {
+    "culture": "ja-JP",
+    "defaultPowerBIDataSourceVersion": "powerBI_V3",
+    "description": "コントソ精密工業株式会社の製造・販売分析用セマンティックモデル。売上・生産・在庫・品質データをスタースキーマで統合。",
+    "tables": [
+      {
+        "name": "DimDate",
+        "description": "日付ディメンション。2025年1月〜2026年3月。会計年度は4月始まり。",
+        "dataCategory": "Time",
+        "columns": [
+          { "name": "DateKey", "dataType": "int64", "isHidden": true, "description": "日付キー（YYYYMMDD形式）" },
+          { "name": "FullDate", "dataType": "dateTime", "isKey": true, "formatString": "yyyy/MM/dd", "description": "日付" },
+          { "name": "Year", "dataType": "int64", "description": "年（暦年）", "summarizeBy": "none" },
+          { "name": "Month", "dataType": "int64", "description": "月（1〜12）", "summarizeBy": "none" },
+          { "name": "MonthName", "dataType": "string", "description": "月名（1月〜12月）", "sortByColumn": "Month" },
+          { "name": "Quarter", "dataType": "string", "description": "暦年四半期（Q1〜Q4）" },
+          { "name": "DayOfWeek", "dataType": "string", "description": "曜日" },
+          { "name": "IsWeekend", "dataType": "boolean", "description": "週末フラグ" },
+          { "name": "FiscalYear", "dataType": "int64", "description": "会計年度（4月始まり）", "summarizeBy": "none" },
+          { "name": "FiscalQuarter", "dataType": "string", "description": "会計四半期（FQ1〜FQ4）" }
+        ],
+        "hierarchies": [
+          {
+            "name": "年月階層",
+            "levels": [
+              { "name": "会計年度", "column": "FiscalYear" },
+              { "name": "会計四半期", "column": "FiscalQuarter" },
+              { "name": "月", "column": "MonthName" },
+              { "name": "日付", "column": "FullDate" }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "DimProduct",
+        "description": "製品マスタ。産業用センサー・計測機器・検査装置・制御機器・ロボティクス・IoTデバイスの6カテゴリ、20製品。",
+        "columns": [
+          { "name": "ProductKey", "dataType": "int64", "isHidden": true, "isKey": true, "description": "サロゲートキー" },
+          { "name": "ProductID", "dataType": "string", "description": "製品ID（PRD-001〜PRD-020）" },
+          { "name": "ProductName", "dataType": "string", "description": "製品名" },
+          { "name": "Category", "dataType": "string", "description": "製品カテゴリ（センサー/計測機器/検査装置/加工装置/制御機器/ロボティクス/IoTデバイス）" },
+          { "name": "UnitPrice", "dataType": "int64", "formatString": "¥#,##0", "description": "標準単価（円）" },
+          { "name": "UnitCost", "dataType": "int64", "formatString": "¥#,##0", "description": "原価（円）" },
+          { "name": "ManufacturingLeadTimeDays", "dataType": "int64", "description": "製造リードタイム（日）" },
+          { "name": "WeightKg", "dataType": "double", "description": "重量（kg）" },
+          { "name": "LaunchDate", "dataType": "dateTime", "formatString": "yyyy/MM/dd", "description": "発売日" }
+        ],
+        "hierarchies": [
+          {
+            "name": "製品階層",
+            "levels": [
+              { "name": "カテゴリ", "column": "Category" },
+              { "name": "製品名", "column": "ProductName" }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "DimCustomer",
+        "description": "顧客マスタ。主に日本の大手製造業30社。ランクS（年間取引1億円以上）、A（3000万〜1億円）、B（3000万円未満）。",
+        "columns": [
+          { "name": "CustomerKey", "dataType": "int64", "isHidden": true, "isKey": true, "description": "サロゲートキー" },
+          { "name": "CustomerID", "dataType": "string", "description": "顧客ID（CUS-001〜CUS-030）" },
+          { "name": "CustomerName", "dataType": "string", "description": "顧客名" },
+          { "name": "Industry", "dataType": "string", "description": "業種" },
+          { "name": "Region", "dataType": "string", "description": "地域（関東/中部/関西/九州/中国）" },
+          { "name": "Prefecture", "dataType": "string", "description": "都道府県" },
+          { "name": "EmployeeCount", "dataType": "int64", "formatString": "#,##0", "description": "従業員数" },
+          { "name": "AccountStartDate", "dataType": "dateTime", "formatString": "yyyy/MM/dd", "description": "取引開始日" },
+          { "name": "CustomerRank", "dataType": "string", "description": "顧客ランク。S=年間取引1億円以上、A=3000万〜1億円、B=3000万円未満" },
+          { "name": "SalesRep", "dataType": "string", "description": "担当営業" }
+        ],
+        "hierarchies": [
+          {
+            "name": "地域階層",
+            "levels": [
+              { "name": "地域", "column": "Region" },
+              { "name": "都道府県", "column": "Prefecture" },
+              { "name": "顧客名", "column": "CustomerName" }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "FactSales",
+        "description": "売上ファクトテーブル。2025年1月〜2026年2月の受注データ1,500件。ステータスは受注確定→処理中→出荷済→キャンセルのライフサイクル。",
+        "columns": [
+          { "name": "SalesKey", "dataType": "int64", "isHidden": true, "description": "サロゲートキー" },
+          { "name": "OrderID", "dataType": "string", "description": "受注ID（ORD-00001〜）" },
+          { "name": "OrderDateKey", "dataType": "int64", "isHidden": true, "description": "受注日キー → DimDate" },
+          { "name": "ShipDateKey", "dataType": "int64", "isHidden": true, "description": "出荷日キー → DimDate（未出荷はnull）" },
+          { "name": "CustomerKey", "dataType": "int64", "isHidden": true, "description": "顧客キー → DimCustomer" },
+          { "name": "ProductKey", "dataType": "int64", "isHidden": true, "description": "製品キー → DimProduct" },
+          { "name": "Quantity", "dataType": "int64", "description": "受注数量" },
+          { "name": "UnitSellingPrice", "dataType": "int64", "formatString": "¥#,##0", "description": "販売単価（円、割引適用後）" },
+          { "name": "TotalAmount", "dataType": "int64", "formatString": "¥#,##0", "description": "合計金額（円）= 販売単価 × 数量" },
+          { "name": "DiscountRate", "dataType": "double", "formatString": "0%", "description": "割引率（0/5%/10%/15%）。10個以上5%、20個以上10%、50個以上15%。" },
+          { "name": "Status", "dataType": "string", "description": "受注ステータス（受注確定/処理中/出荷済/キャンセル）" },
+          { "name": "DeliveryRegion", "dataType": "string", "description": "納品先地域" }
+        ],
+        "measures": [
+          {
+            "name": "売上合計",
+            "expression": "SUM(FactSales[TotalAmount])",
+            "formatString": "¥#,##0",
+            "description": "売上金額の合計（キャンセル含む全ステータス）"
+          },
+          {
+            "name": "有効売上合計",
+            "expression": "CALCULATE(SUM(FactSales[TotalAmount]), FactSales[Status] <> \"キャンセル\")",
+            "formatString": "¥#,##0",
+            "description": "キャンセルを除いた売上金額の合計"
+          },
+          {
+            "name": "受注件数",
+            "expression": "COUNTROWS(FactSales)",
+            "formatString": "#,##0",
+            "description": "受注件数（全ステータス）"
+          },
+          {
+            "name": "有効受注件数",
+            "expression": "CALCULATE(COUNTROWS(FactSales), FactSales[Status] <> \"キャンセル\")",
+            "formatString": "#,##0",
+            "description": "キャンセルを除いた受注件数"
+          },
+          {
+            "name": "受注数量合計",
+            "expression": "SUM(FactSales[Quantity])",
+            "formatString": "#,##0",
+            "description": "受注数量の合計"
+          },
+          {
+            "name": "平均受注単価",
+            "expression": "AVERAGE(FactSales[UnitSellingPrice])",
+            "formatString": "¥#,##0",
+            "description": "平均販売単価"
+          },
+          {
+            "name": "平均受注金額",
+            "expression": "DIVIDE(SUM(FactSales[TotalAmount]), COUNTROWS(FactSales))",
+            "formatString": "¥#,##0",
+            "description": "1受注あたりの平均金額"
+          },
+          {
+            "name": "キャンセル率",
+            "expression": "DIVIDE(CALCULATE(COUNTROWS(FactSales), FactSales[Status] = \"キャンセル\"), COUNTROWS(FactSales))",
+            "formatString": "0.0%",
+            "description": "全受注に対するキャンセルの比率"
+          },
+          {
+            "name": "出荷済件数",
+            "expression": "CALCULATE(COUNTROWS(FactSales), FactSales[Status] = \"出荷済\")",
+            "formatString": "#,##0",
+            "description": "出荷済の受注件数"
+          },
+          {
+            "name": "売上前月比",
+            "expression": "VAR CurrentSales = [有効売上合計] VAR PrevMonthSales = CALCULATE([有効売上合計], DATEADD(DimDate[FullDate], -1, MONTH)) RETURN DIVIDE(CurrentSales - PrevMonthSales, PrevMonthSales)",
+            "formatString": "+0.0%;-0.0%",
+            "description": "前月比の売上増減率"
+          },
+          {
+            "name": "粗利額",
+            "expression": "SUMX(FactSales, FactSales[TotalAmount] - (RELATED(DimProduct[UnitCost]) * FactSales[Quantity]))",
+            "formatString": "¥#,##0",
+            "description": "売上金額 - 原価の合計（粗利益額）"
+          },
+          {
+            "name": "粗利率",
+            "expression": "DIVIDE([粗利額], [売上合計])",
+            "formatString": "0.0%",
+            "description": "粗利額 ÷ 売上合計"
+          },
+          {
+            "name": "顧客数",
+            "expression": "DISTINCTCOUNT(FactSales[CustomerKey])",
+            "formatString": "#,##0",
+            "description": "ユニーク顧客数"
+          }
+        ]
+      },
+      {
+        "name": "FactProduction",
+        "description": "生産ファクトテーブル。3工場（本社工場/第二工場/九州工場）× 5ライン × 2シフトで生産。歩留まり率は通常95〜99.8%、5%の確率で75〜90%に低下（不良多発）。",
+        "columns": [
+          { "name": "ProductionKey", "dataType": "int64", "isHidden": true, "description": "サロゲートキー" },
+          { "name": "ProductionRecordID", "dataType": "string", "description": "生産記録ID（MFG-00001〜）" },
+          { "name": "ProductionDateKey", "dataType": "int64", "isHidden": true, "description": "生産日キー → DimDate" },
+          { "name": "ProductKey", "dataType": "int64", "isHidden": true, "description": "製品キー → DimProduct" },
+          { "name": "Factory", "dataType": "string", "description": "工場名（本社工場/第二工場/九州工場）" },
+          { "name": "ProductionLine", "dataType": "string", "description": "製造ライン（ライン-A〜E）" },
+          { "name": "Shift", "dataType": "string", "description": "シフト（日勤/夜勤）" },
+          { "name": "PlannedQuantity", "dataType": "int64", "description": "計画数量" },
+          { "name": "ActualQuantity", "dataType": "int64", "description": "実績数量（良品数）" },
+          { "name": "DefectQuantity", "dataType": "int64", "description": "不良数量" },
+          { "name": "YieldRate", "dataType": "double", "formatString": "0.0%", "description": "歩留まり率（0〜1の小数）。95%以上が正常。90%以下は要注意。" },
+          { "name": "WorkHours", "dataType": "double", "description": "作業時間（時間）" },
+          { "name": "DowntimeMinutes", "dataType": "int64", "description": "設備停止時間（分）。15分以上は異常停止。" }
+        ],
+        "measures": [
+          {
+            "name": "平均歩留まり率",
+            "expression": "AVERAGE(FactProduction[YieldRate])",
+            "formatString": "0.0%",
+            "description": "歩留まり率の平均"
+          },
+          {
+            "name": "生産計画数量合計",
+            "expression": "SUM(FactProduction[PlannedQuantity])",
+            "formatString": "#,##0",
+            "description": "計画数量の合計"
+          },
+          {
+            "name": "生産実績数量合計",
+            "expression": "SUM(FactProduction[ActualQuantity])",
+            "formatString": "#,##0",
+            "description": "実績数量の合計"
+          },
+          {
+            "name": "不良数量合計",
+            "expression": "SUM(FactProduction[DefectQuantity])",
+            "formatString": "#,##0",
+            "description": "不良数量の合計"
+          },
+          {
+            "name": "計画達成率",
+            "expression": "DIVIDE(SUM(FactProduction[ActualQuantity]), SUM(FactProduction[PlannedQuantity]))",
+            "formatString": "0.0%",
+            "description": "実績数量 ÷ 計画数量"
+          },
+          {
+            "name": "歩留まり異常件数",
+            "expression": "CALCULATE(COUNTROWS(FactProduction), FactProduction[YieldRate] < 0.90)",
+            "formatString": "#,##0",
+            "description": "歩留まり率90%未満の生産記録数（要改善対象）"
+          },
+          {
+            "name": "設備稼働率",
+            "expression": "DIVIDE(SUM(FactProduction[WorkHours]) * 60 - SUM(FactProduction[DowntimeMinutes]), SUM(FactProduction[WorkHours]) * 60)",
+            "formatString": "0.0%",
+            "description": "（総作業時間 - 停止時間）÷ 総作業時間"
+          },
+          {
+            "name": "平均ダウンタイム",
+            "expression": "AVERAGE(FactProduction[DowntimeMinutes])",
+            "formatString": "#,##0 分",
+            "description": "1生産記録あたりの平均設備停止時間（分）"
+          },
+          {
+            "name": "生産記録数",
+            "expression": "COUNTROWS(FactProduction)",
+            "formatString": "#,##0",
+            "description": "生産記録の件数"
+          }
+        ]
+      },
+      {
+        "name": "FactInventorySnapshot",
+        "description": "在庫スナップショットファクト。2026/2/28時点の4倉庫×20製品=80レコード。安全在庫を下回ると「在庫不足」、5倍超で「過剰在庫」。",
+        "columns": [
+          { "name": "InventoryKey", "dataType": "int64", "isHidden": true, "description": "サロゲートキー" },
+          { "name": "SnapshotDateKey", "dataType": "int64", "isHidden": true, "description": "スナップショット日キー → DimDate" },
+          { "name": "ProductKey", "dataType": "int64", "isHidden": true, "description": "製品キー → DimProduct" },
+          { "name": "WarehouseName", "dataType": "string", "description": "倉庫名（本社倉庫/東京物流センター/大阪物流センター/九州物流センター）" },
+          { "name": "CurrentStock", "dataType": "int64", "description": "現在庫数" },
+          { "name": "SafetyStock", "dataType": "int64", "description": "安全在庫数" },
+          { "name": "StockStatus", "dataType": "string", "description": "在庫ステータス（在庫不足/適正/過剰在庫）" },
+          { "name": "LastReceiptDateKey", "dataType": "int64", "isHidden": true, "description": "最終入庫日キー → DimDate" },
+          { "name": "ShelfLocation", "dataType": "string", "description": "棚番（例: A-01-03）" }
+        ],
+        "measures": [
+          {
+            "name": "在庫総数",
+            "expression": "SUM(FactInventorySnapshot[CurrentStock])",
+            "formatString": "#,##0",
+            "description": "現在庫数の合計"
+          },
+          {
+            "name": "在庫不足SKU数",
+            "expression": "CALCULATE(COUNTROWS(FactInventorySnapshot), FactInventorySnapshot[StockStatus] = \"在庫不足\")",
+            "formatString": "#,##0",
+            "description": "在庫不足ステータスのSKU数"
+          },
+          {
+            "name": "過剰在庫SKU数",
+            "expression": "CALCULATE(COUNTROWS(FactInventorySnapshot), FactInventorySnapshot[StockStatus] = \"過剰在庫\")",
+            "formatString": "#,##0",
+            "description": "過剰在庫ステータスのSKU数"
+          },
+          {
+            "name": "在庫充足率",
+            "expression": "DIVIDE(CALCULATE(COUNTROWS(FactInventorySnapshot), FactInventorySnapshot[CurrentStock] >= FactInventorySnapshot[SafetyStock]), COUNTROWS(FactInventorySnapshot))",
+            "formatString": "0.0%",
+            "description": "安全在庫数以上の在庫を持つSKU比率"
+          }
+        ]
+      },
+      {
+        "name": "FactQualityInspection",
+        "description": "品質検査ファクト。受入検査・工程内検査・最終検査・出荷前検査の4種別。結果は合格(80%)・条件付合格(10%)・不合格(10%)。",
+        "columns": [
+          { "name": "QualityKey", "dataType": "int64", "isHidden": true, "description": "サロゲートキー" },
+          { "name": "InspectionID", "dataType": "string", "description": "検査ID（QA-00001〜）" },
+          { "name": "InspectionDateKey", "dataType": "int64", "isHidden": true, "description": "検査日キー → DimDate" },
+          { "name": "ProductKey", "dataType": "int64", "isHidden": true, "description": "製品キー → DimProduct" },
+          { "name": "InspectionType", "dataType": "string", "description": "検査種別（受入検査/工程内検査/最終検査/出荷前検査）" },
+          { "name": "LotSize", "dataType": "int64", "description": "ロットサイズ" },
+          { "name": "SampleSize", "dataType": "int64", "description": "サンプル数" },
+          { "name": "Result", "dataType": "string", "description": "検査結果（合格/条件付合格/不合格）" },
+          { "name": "DefectCategory", "dataType": "string", "description": "不良カテゴリ（外観不良/寸法不良/機能不良/動作不良/組立不良/塗装不良/電気特性不良/なし）" },
+          { "name": "DefectCount", "dataType": "int64", "description": "不良数" },
+          { "name": "Inspector", "dataType": "string", "description": "検査担当者" }
+        ],
+        "measures": [
+          {
+            "name": "検査件数",
+            "expression": "COUNTROWS(FactQualityInspection)",
+            "formatString": "#,##0",
+            "description": "検査の総件数"
+          },
+          {
+            "name": "合格率",
+            "expression": "DIVIDE(CALCULATE(COUNTROWS(FactQualityInspection), FactQualityInspection[Result] = \"合格\"), COUNTROWS(FactQualityInspection))",
+            "formatString": "0.0%",
+            "description": "合格件数 ÷ 全検査件数"
+          },
+          {
+            "name": "不合格率",
+            "expression": "DIVIDE(CALCULATE(COUNTROWS(FactQualityInspection), FactQualityInspection[Result] = \"不合格\"), COUNTROWS(FactQualityInspection))",
+            "formatString": "0.0%",
+            "description": "不合格件数 ÷ 全検査件数"
+          },
+          {
+            "name": "不良数合計",
+            "expression": "SUM(FactQualityInspection[DefectCount])",
+            "formatString": "#,##0",
+            "description": "不良数の合計"
+          },
+          {
+            "name": "不良率",
+            "expression": "DIVIDE(SUM(FactQualityInspection[DefectCount]), SUM(FactQualityInspection[SampleSize]))",
+            "formatString": "0.0%",
+            "description": "不良数 ÷ サンプル数"
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "name": "Sales_to_OrderDate",
+        "fromTable": "FactSales",
+        "fromColumn": "OrderDateKey",
+        "toTable": "DimDate",
+        "toColumn": "DateKey",
+        "isActive": true,
+        "crossFilteringBehavior": "oneDirection",
+        "description": "売上の受注日 → 日付ディメンション"
+      },
+      {
+        "name": "Sales_to_Product",
+        "fromTable": "FactSales",
+        "fromColumn": "ProductKey",
+        "toTable": "DimProduct",
+        "toColumn": "ProductKey",
+        "isActive": true,
+        "crossFilteringBehavior": "oneDirection",
+        "description": "売上 → 製品ディメンション"
+      },
+      {
+        "name": "Sales_to_Customer",
+        "fromTable": "FactSales",
+        "fromColumn": "CustomerKey",
+        "toTable": "DimCustomer",
+        "toColumn": "CustomerKey",
+        "isActive": true,
+        "crossFilteringBehavior": "oneDirection",
+        "description": "売上 → 顧客ディメンション"
+      },
+      {
+        "name": "Production_to_Date",
+        "fromTable": "FactProduction",
+        "fromColumn": "ProductionDateKey",
+        "toTable": "DimDate",
+        "toColumn": "DateKey",
+        "isActive": false,
+        "crossFilteringBehavior": "oneDirection",
+        "description": "生産日 → 日付ディメンション（非アクティブ。USERELATIONSHIP で使用）"
+      },
+      {
+        "name": "Production_to_Product",
+        "fromTable": "FactProduction",
+        "fromColumn": "ProductKey",
+        "toTable": "DimProduct",
+        "toColumn": "ProductKey",
+        "isActive": true,
+        "crossFilteringBehavior": "oneDirection",
+        "description": "生産 → 製品ディメンション"
+      },
+      {
+        "name": "Inventory_to_Product",
+        "fromTable": "FactInventorySnapshot",
+        "fromColumn": "ProductKey",
+        "toTable": "DimProduct",
+        "toColumn": "ProductKey",
+        "isActive": true,
+        "crossFilteringBehavior": "oneDirection",
+        "description": "在庫 → 製品ディメンション"
+      },
+      {
+        "name": "Quality_to_Date",
+        "fromTable": "FactQualityInspection",
+        "fromColumn": "InspectionDateKey",
+        "toTable": "DimDate",
+        "toColumn": "DateKey",
+        "isActive": false,
+        "crossFilteringBehavior": "oneDirection",
+        "description": "検査日 → 日付ディメンション（非アクティブ。USERELATIONSHIP で使用）"
+      },
+      {
+        "name": "Quality_to_Product",
+        "fromTable": "FactQualityInspection",
+        "fromColumn": "ProductKey",
+        "toTable": "DimProduct",
+        "toColumn": "ProductKey",
+        "isActive": true,
+        "crossFilteringBehavior": "oneDirection",
+        "description": "品質検査 → 製品ディメンション"
+      }
+    ]
+  }
+}

@@ -1,0 +1,217 @@
+/// =============================================================
+/// コントソ精密工業 セマンティックモデル - Fabricインポート用DAXメジャー一覧
+/// Tabular Editor またはFabric UI のメジャー作成画面に貼り付けて使用
+/// =============================================================
+
+// ─────────────────────────────────────────────
+// 売上メジャー（FactSales テーブルに作成）
+// ─────────────────────────────────────────────
+
+// 売上合計
+売上合計 = SUM(FactSales[TotalAmount])
+// Format: ¥#,##0
+// Description: 売上金額の合計（キャンセル含む全ステータス）
+
+// 有効売上合計
+有効売上合計 = CALCULATE(SUM(FactSales[TotalAmount]), FactSales[Status] <> "キャンセル")
+// Format: ¥#,##0
+// Description: キャンセルを除いた売上金額の合計
+
+// 受注件数
+受注件数 = COUNTROWS(FactSales)
+// Format: #,##0
+// Description: 受注件数（全ステータス）
+
+// 有効受注件数
+有効受注件数 = CALCULATE(COUNTROWS(FactSales), FactSales[Status] <> "キャンセル")
+// Format: #,##0
+// Description: キャンセルを除いた受注件数
+
+// 受注数量合計
+受注数量合計 = SUM(FactSales[Quantity])
+// Format: #,##0
+
+// 平均受注単価
+平均受注単価 = AVERAGE(FactSales[UnitSellingPrice])
+// Format: ¥#,##0
+
+// 平均受注金額
+平均受注金額 = DIVIDE(SUM(FactSales[TotalAmount]), COUNTROWS(FactSales))
+// Format: ¥#,##0
+// Description: 1受注あたりの平均金額
+
+// キャンセル率
+キャンセル率 =
+    DIVIDE(
+        CALCULATE(COUNTROWS(FactSales), FactSales[Status] = "キャンセル"),
+        COUNTROWS(FactSales)
+    )
+// Format: 0.0%
+
+// 出荷済件数
+出荷済件数 = CALCULATE(COUNTROWS(FactSales), FactSales[Status] = "出荷済")
+// Format: #,##0
+
+// 売上前月比
+売上前月比 =
+    VAR CurrentSales = [有効売上合計]
+    VAR PrevMonthSales = CALCULATE([有効売上合計], DATEADD(DimDate[FullDate], -1, MONTH))
+    RETURN DIVIDE(CurrentSales - PrevMonthSales, PrevMonthSales)
+// Format: +0.0%;-0.0%
+
+// 粗利額
+粗利額 =
+    SUMX(
+        FactSales,
+        FactSales[TotalAmount] - (RELATED(DimProduct[UnitCost]) * FactSales[Quantity])
+    )
+// Format: ¥#,##0
+// Description: 売上金額 − 原価の合計
+
+// 粗利率
+粗利率 = DIVIDE([粗利額], [売上合計])
+// Format: 0.0%
+
+// 顧客数
+顧客数 = DISTINCTCOUNT(FactSales[CustomerKey])
+// Format: #,##0
+
+// 売上累計（YTD）
+売上累計YTD =
+    TOTALYTD([有効売上合計], DimDate[FullDate], "3/31")
+// Format: ¥#,##0
+// Description: 会計年度ベースの年度累計売上（4月始まり）
+
+
+// ─────────────────────────────────────────────
+// 生産メジャー（FactProduction テーブルに作成）
+// ─────────────────────────────────────────────
+
+// 平均歩留まり率
+平均歩留まり率 = AVERAGE(FactProduction[YieldRate])
+// Format: 0.0%
+
+// 生産計画数量合計
+生産計画数量合計 = SUM(FactProduction[PlannedQuantity])
+// Format: #,##0
+
+// 生産実績数量合計
+生産実績数量合計 = SUM(FactProduction[ActualQuantity])
+// Format: #,##0
+
+// 不良数量合計
+不良数量合計 = SUM(FactProduction[DefectQuantity])
+// Format: #,##0
+
+// 計画達成率
+計画達成率 =
+    DIVIDE(
+        SUM(FactProduction[ActualQuantity]),
+        SUM(FactProduction[PlannedQuantity])
+    )
+// Format: 0.0%
+
+// 歩留まり異常件数
+歩留まり異常件数 =
+    CALCULATE(
+        COUNTROWS(FactProduction),
+        FactProduction[YieldRate] < 0.90
+    )
+// Format: #,##0
+// Description: 歩留まり90%未満の生産記録数。要改善対象。
+
+// 設備稼働率
+設備稼働率 =
+    DIVIDE(
+        SUM(FactProduction[WorkHours]) * 60 - SUM(FactProduction[DowntimeMinutes]),
+        SUM(FactProduction[WorkHours]) * 60
+    )
+// Format: 0.0%
+
+// 平均ダウンタイム
+平均ダウンタイム = AVERAGE(FactProduction[DowntimeMinutes])
+// Format: #,##0
+// Description: 1生産記録あたりの平均設備停止時間（分）
+
+// 生産記録数
+生産記録数 = COUNTROWS(FactProduction)
+// Format: #,##0
+
+
+// ─────────────────────────────────────────────
+// 在庫メジャー（FactInventorySnapshot テーブルに作成）
+// ─────────────────────────────────────────────
+
+// 在庫総数
+在庫総数 = SUM(FactInventorySnapshot[CurrentStock])
+// Format: #,##0
+
+// 在庫不足SKU数
+在庫不足SKU数 =
+    CALCULATE(
+        COUNTROWS(FactInventorySnapshot),
+        FactInventorySnapshot[StockStatus] = "在庫不足"
+    )
+// Format: #,##0
+
+// 過剰在庫SKU数
+過剰在庫SKU数 =
+    CALCULATE(
+        COUNTROWS(FactInventorySnapshot),
+        FactInventorySnapshot[StockStatus] = "過剰在庫"
+    )
+// Format: #,##0
+
+// 在庫充足率
+在庫充足率 =
+    DIVIDE(
+        CALCULATE(
+            COUNTROWS(FactInventorySnapshot),
+            FactInventorySnapshot[CurrentStock] >= FactInventorySnapshot[SafetyStock]
+        ),
+        COUNTROWS(FactInventorySnapshot)
+    )
+// Format: 0.0%
+
+
+// ─────────────────────────────────────────────
+// 品質メジャー（FactQualityInspection テーブルに作成）
+// ─────────────────────────────────────────────
+
+// 検査件数
+検査件数 = COUNTROWS(FactQualityInspection)
+// Format: #,##0
+
+// 合格率
+合格率 =
+    DIVIDE(
+        CALCULATE(
+            COUNTROWS(FactQualityInspection),
+            FactQualityInspection[Result] = "合格"
+        ),
+        COUNTROWS(FactQualityInspection)
+    )
+// Format: 0.0%
+
+// 不合格率
+不合格率 =
+    DIVIDE(
+        CALCULATE(
+            COUNTROWS(FactQualityInspection),
+            FactQualityInspection[Result] = "不合格"
+        ),
+        COUNTROWS(FactQualityInspection)
+    )
+// Format: 0.0%
+
+// 不良数合計
+不良数合計 = SUM(FactQualityInspection[DefectCount])
+// Format: #,##0
+
+// 不良率
+不良率 =
+    DIVIDE(
+        SUM(FactQualityInspection[DefectCount]),
+        SUM(FactQualityInspection[SampleSize])
+    )
+// Format: 0.0%

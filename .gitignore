@@ -1,0 +1,26 @@
+# Python
+.venv/
+scripts/
+
+# Data files
+*.xlsx
+*.json
+!demo-data/
+!semantic-model/
+
+# Docs
+DEMO_INSTRUCTION.md
+GHCP_WORKFLOW_SUMMARY.md
+docs/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
